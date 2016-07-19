@@ -26,9 +26,9 @@ namespace PokemonGo.RocketAPI.Console
 
             System.Console.WriteLine("booting");
 
-            await client.LoginGoogle();
+            //await client.LoginGoogle();
 
-            //await client.LoginPtc("username", "password");
+            await client.LoginPtc("username", "password");
             //await client.LoginGoogle(Settings.DeviceId, Settings.Email, Settings.LongDurationToken);
             var serverResponse = await client.GetServer();
             var profile = await client.GetProfile();
@@ -38,10 +38,9 @@ namespace PokemonGo.RocketAPI.Console
             var pokemons = inventory.Payload[0].Bag.Items.Select(i => i.Item?.Pokemon).Where(p => p != null && p?.PokemonId != InventoryResponse.Types.PokemonProto.Types.PokemonIds.PokemonUnset);
             
             System.Console.WriteLine("starting farm");
-            //await ExecuteFarmingPokestopsAndPokemons(client);
-            await ExecuteCatchAllNearbyPokemons(client);
+            await ExecuteFarmingPokestopsAndPokemons(client);
+            //await ExecuteCatchAllNearbyPokemons(client);
 
-            
         }
 
 
@@ -55,7 +54,7 @@ namespace PokemonGo.RocketAPI.Console
             foreach (var pokeStop in pokeStops)
             {
                 var update = await client.UpdatePlayerLocation(pokeStop.Latitude, pokeStop.Longitude);
-                System.Console.WriteLine($"jump to pos - lat: { pokeStop.Latitude}, long: {pokeStop.Longitude}");
+                System.Console.WriteLine($"jump to fort pos - lat: { pokeStop.Latitude}, long: {pokeStop.Longitude}");
                 var fortInfo = await client.GetFort(pokeStop.FortId, pokeStop.Latitude, pokeStop.Longitude);
                 var fortSearch = await client.SearchFort(pokeStop.FortId, pokeStop.Latitude, pokeStop.Longitude);
                 var bag = fortSearch.Payload[0];
@@ -77,6 +76,7 @@ namespace PokemonGo.RocketAPI.Console
             foreach (var pokemon in pokemons)
             {
                 var update = await client.UpdatePlayerLocation(pokemon.Latitude, pokemon.Longitude);
+                System.Console.WriteLine($"jump to pokemon pos - lat: { pokemon.Latitude}, long: {pokemon.Longitude}");
                 var encounterPokemonRespone = await client.EncounterPokemon(pokemon.EncounterId, pokemon.SpawnpointId);
 
                 CatchPokemonResponse caughtPokemonResponse;

@@ -13,8 +13,8 @@ namespace PokemonGo.RocketAPI
         public const string Email = "fake@gmail.com";
         public const string ClientSig = "fake";
         public const string LongDurationToken = "fakeid";
-        public const double DefaultLatitude = 10;
-        public const double DefaultLongitude = 10;
+        public const double DefaultLatitude = 45.030152;
+        public const double DefaultLongitude = -93.31931;
 
     }
 }
