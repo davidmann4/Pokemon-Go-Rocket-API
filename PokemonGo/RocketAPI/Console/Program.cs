@@ -24,21 +24,27 @@ namespace PokemonGo.RocketAPI.Console
         {
             var client = new Client(Settings.DefaultLatitude, Settings.DefaultLongitude);
 
-            //await client.LoginPtc("FeroxRev", "Sekret");
-            await client.LoginGoogle(Settings.DeviceId, Settings.Email, Settings.LongDurationToken);
+            System.Console.WriteLine("booting");
+
+            await client.LoginGoogle();
+
+            //await client.LoginPtc("username", "password");
+            //await client.LoginGoogle(Settings.DeviceId, Settings.Email, Settings.LongDurationToken);
             var serverResponse = await client.GetServer();
             var profile = await client.GetProfile();
             var settings = await client.GetSettings();
             var mapObjects = await client.GetMapObjects();
             var inventory = await client.GetInventory();
             var pokemons = inventory.Payload[0].Bag.Items.Select(i => i.Item?.Pokemon).Where(p => p != null && p?.PokemonId != InventoryResponse.Types.PokemonProto.Types.PokemonIds.PokemonUnset);
-
-
-            await ExecuteFarmingPokestopsAndPokemons(client);
-            //await ExecuteCatchAllNearbyPokemons(client);
+            
+            System.Console.WriteLine("starting farm");
+            //await ExecuteFarmingPokestopsAndPokemons(client);
+            await ExecuteCatchAllNearbyPokemons(client);
 
             
         }
+
+
 
         private static async Task ExecuteFarmingPokestopsAndPokemons(Client client)
         {
@@ -49,6 +55,7 @@ namespace PokemonGo.RocketAPI.Console
             foreach (var pokeStop in pokeStops)
             {
                 var update = await client.UpdatePlayerLocation(pokeStop.Latitude, pokeStop.Longitude);
+                System.Console.WriteLine($"jump to pos - lat: { pokeStop.Latitude}, long: {pokeStop.Longitude}");
                 var fortInfo = await client.GetFort(pokeStop.FortId, pokeStop.Latitude, pokeStop.Longitude);
                 var fortSearch = await client.SearchFort(pokeStop.FortId, pokeStop.Latitude, pokeStop.Longitude);
                 var bag = fortSearch.Payload[0];
@@ -57,7 +64,7 @@ namespace PokemonGo.RocketAPI.Console
 
                 await ExecuteCatchAllNearbyPokemons(client);
 
-                await Task.Delay(15000);
+                await Task.Delay(5000);
             }
         }
 
